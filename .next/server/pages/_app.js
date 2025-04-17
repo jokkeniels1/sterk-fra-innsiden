@@ -60,7 +60,9 @@ function App({ Component, pageProps }) {
                     /*#__PURE__*/ jsx_runtime.jsx((link_default()), {
                         href: "/",
                         className: "text-xl font-bold text-indigo-800 hover:opacity-80",
-                        children: "\uD83C\uDF31 Sterk Fra Innsiden"
+                        children: /*#__PURE__*/ jsx_runtime.jsx("span", {
+                            children: "\uD83C\uDF31 Sterk Fra Innsiden"
+                        })
                     }),
                     /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
                         className: "flex gap-4 text-sm sm:text-base font-medium",
@@ -108,7 +110,8 @@ function App({ Component, pageProps }) {
                     }),
                     /*#__PURE__*/ (0,jsx_runtime.jsxs)("p", {
                         children: [
-                            "Kontakt: ",
+                            "Kontakt:",
+                            " ",
                             /*#__PURE__*/ jsx_runtime.jsx("a", {
                                 href: "mailto:kontakt@sterkfra.no",
                                 className: "underline",
