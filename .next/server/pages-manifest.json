@@ -3,8 +3,8 @@
   "/_error": "pages/_error.js",
   "/chat": "pages/chat.html",
   "/": "pages/index.html",
-  "/om": "pages/om.html",
   "/trening-hode": "pages/trening-hode.html",
+  "/om": "pages/om.html",
   "/trening-kropp": "pages/trening-kropp.html",
   "/_document": "pages/_document.js",
   "/404": "pages/404.html"

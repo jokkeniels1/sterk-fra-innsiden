@@ -7,7 +7,7 @@ export default function App({ Component, pageProps }) {
       {/* Toppmeny */}
       <nav className="bg-white shadow-md px-6 py-4 flex justify-between items-center">
         <Link href="/" className="text-xl font-bold text-indigo-800 hover:opacity-80">
-          🌱 Sterk Fra Innsiden
+          <span>🌱 Sterk Fra Innsiden</span>
         </Link>
         <div className="flex gap-4 text-sm sm:text-base font-medium">
           <Link href="/" className="hover:underline">Hjem</Link>
@@ -18,7 +18,7 @@ export default function App({ Component, pageProps }) {
         </div>
       </nav>
 
-      {/* Sideinnhold */}
+      {/* Innhold */}
       <main className="flex-1 p-6 max-w-4xl mx-auto w-full">
         <Component {...pageProps} />
       </main>
@@ -26,7 +26,12 @@ export default function App({ Component, pageProps }) {
       {/* Footer */}
       <footer className="bg-white shadow-inner py-6 text-center text-sm text-gray-500">
         <p>© 2025 Sterk Fra Innsiden – Laget med varme, styrke og balanse.</p>
-        <p>Kontakt: <a href="mailto:kontakt@sterkfra.no" className="underline">kontakt@sterkfra.no</a></p>
+        <p>
+          Kontakt:{" "}
+          <a href="mailto:kontakt@sterkfra.no" className="underline">
+            kontakt@sterkfra.no
+          </a>
+        </p>
       </footer>
     </div>
   );
