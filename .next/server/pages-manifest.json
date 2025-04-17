@@ -1,11 +1,11 @@
 {
   "/_app": "pages/_app.js",
-  "/_error": "pages/_error.js",
   "/chat": "pages/chat.html",
-  "/": "pages/index.html",
-  "/om": "pages/om.html",
+  "/_error": "pages/_error.js",
   "/trening-hode": "pages/trening-hode.html",
+  "/": "pages/index.html",
   "/trening-kropp": "pages/trening-kropp.html",
+  "/om": "pages/om.html",
   "/_document": "pages/_document.js",
   "/404": "pages/404.html"
 }
