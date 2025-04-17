@@ -1,8 +1,8 @@
 export default function Om() {
-    return (
-      <div>
-        <h1>Om oss</h1>
-        <p>Dette er et prosjekt som kombinerer fysisk og mental trening.</p>
-      </div>
-    );
-  }
+  return (
+    <div>
+      <h1>Om oss</h1>
+      <p>Dette prosjektet kombinerer fysisk og mental trening i et trygt format.</p>
+    </div>
+  );
+}
