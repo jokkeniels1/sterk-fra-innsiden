@@ -1,4 +1,3 @@
-"use strict";
 (() => {
 var exports = {};
 exports.id = 888;
@@ -8,6 +7,7 @@ exports.modules = {
 /***/ 581:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 // ESM COMPAT FLAG
 __webpack_require__.r(__webpack_exports__);
 
@@ -44,50 +44,79 @@ var jsx_runtime = __webpack_require__(893);
 // EXTERNAL MODULE: ./node_modules/next/link.js
 var next_link = __webpack_require__(664);
 var link_default = /*#__PURE__*/__webpack_require__.n(next_link);
+// EXTERNAL MODULE: ./styles/globals.css
+var globals = __webpack_require__(764);
 ;// CONCATENATED MODULE: ./pages/_app.js
-Object(function webpackMissingModule() { var e = new Error("Cannot find module '@/styles/globals.css'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 
 
 
 function App({ Component, pageProps }) {
     return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-        className: "min-h-screen bg-[#f6f9f8] text-gray-800 font-sans",
+        className: "flex flex-col min-h-screen bg-[#f6f9f8] text-gray-800 font-sans",
         children: [
             /*#__PURE__*/ (0,jsx_runtime.jsxs)("nav", {
-                className: "bg-white shadow-md px-6 py-4 flex gap-6 text-sm sm:text-base font-medium",
+                className: "bg-white shadow-md px-6 py-4 flex justify-between items-center",
                 children: [
                     /*#__PURE__*/ jsx_runtime.jsx((link_default()), {
                         href: "/",
-                        className: "hover:underline",
-                        children: "Hjem"
+                        className: "text-xl font-bold text-indigo-800 hover:opacity-80",
+                        children: "\uD83C\uDF31 Sterk Fra Innsiden"
                     }),
-                    /*#__PURE__*/ jsx_runtime.jsx((link_default()), {
-                        href: "/trening-kropp",
-                        className: "hover:underline",
-                        children: "Trening for kroppen"
-                    }),
-                    /*#__PURE__*/ jsx_runtime.jsx((link_default()), {
-                        href: "/trening-hode",
-                        className: "hover:underline",
-                        children: "Trening for hodet"
-                    }),
-                    /*#__PURE__*/ jsx_runtime.jsx((link_default()), {
-                        href: "/chat",
-                        className: "hover:underline",
-                        children: "AI-treningsbuddy"
-                    }),
-                    /*#__PURE__*/ jsx_runtime.jsx((link_default()), {
-                        href: "/om",
-                        className: "hover:underline",
-                        children: "Om oss"
+                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
+                        className: "flex gap-4 text-sm sm:text-base font-medium",
+                        children: [
+                            /*#__PURE__*/ jsx_runtime.jsx((link_default()), {
+                                href: "/",
+                                className: "hover:underline",
+                                children: "Hjem"
+                            }),
+                            /*#__PURE__*/ jsx_runtime.jsx((link_default()), {
+                                href: "/trening-kropp",
+                                className: "hover:underline",
+                                children: "Kropp"
+                            }),
+                            /*#__PURE__*/ jsx_runtime.jsx((link_default()), {
+                                href: "/trening-hode",
+                                className: "hover:underline",
+                                children: "Hode"
+                            }),
+                            /*#__PURE__*/ jsx_runtime.jsx((link_default()), {
+                                href: "/chat",
+                                className: "hover:underline",
+                                children: "AI-Buddy"
+                            }),
+                            /*#__PURE__*/ jsx_runtime.jsx((link_default()), {
+                                href: "/om",
+                                className: "hover:underline",
+                                children: "Om"
+                            })
+                        ]
                     })
                 ]
             }),
             /*#__PURE__*/ jsx_runtime.jsx("main", {
-                className: "p-6 max-w-4xl mx-auto",
+                className: "flex-1 p-6 max-w-4xl mx-auto w-full",
                 children: /*#__PURE__*/ jsx_runtime.jsx(Component, {
                     ...pageProps
                 })
+            }),
+            /*#__PURE__*/ (0,jsx_runtime.jsxs)("footer", {
+                className: "bg-white shadow-inner py-6 text-center text-sm text-gray-500",
+                children: [
+                    /*#__PURE__*/ jsx_runtime.jsx("p", {
+                        children: "\xa9 2025 Sterk Fra Innsiden – Laget med varme, styrke og balanse."
+                    }),
+                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("p", {
+                        children: [
+                            "Kontakt: ",
+                            /*#__PURE__*/ jsx_runtime.jsx("a", {
+                                href: "mailto:kontakt@sterkfra.no",
+                                className: "underline",
+                                children: "kontakt@sterkfra.no"
+                            })
+                        ]
+                    })
+                ]
             })
         ]
     });
@@ -128,9 +157,17 @@ function App({ Component, pageProps }) {
 
 /***/ }),
 
+/***/ 764:
+/***/ (() => {
+
+
+
+/***/ }),
+
 /***/ 76:
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("next/dist/server/future/route-modules/route-module.js");
 
 /***/ }),
@@ -138,6 +175,7 @@ module.exports = require("next/dist/server/future/route-modules/route-module.js"
 /***/ 100:
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("next/dist/server/render.js");
 
 /***/ }),
@@ -145,6 +183,7 @@ module.exports = require("next/dist/server/render.js");
 /***/ 280:
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("next/dist/shared/lib/app-router-context.js");
 
 /***/ }),
@@ -152,6 +191,7 @@ module.exports = require("next/dist/shared/lib/app-router-context.js");
 /***/ 964:
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("next/dist/shared/lib/router-context.js");
 
 /***/ }),
@@ -159,6 +199,7 @@ module.exports = require("next/dist/shared/lib/router-context.js");
 /***/ 751:
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("next/dist/shared/lib/router/utils/add-path-prefix.js");
 
 /***/ }),
@@ -166,6 +207,7 @@ module.exports = require("next/dist/shared/lib/router/utils/add-path-prefix.js")
 /***/ 938:
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("next/dist/shared/lib/router/utils/format-url.js");
 
 /***/ }),
@@ -173,6 +215,7 @@ module.exports = require("next/dist/shared/lib/router/utils/format-url.js");
 /***/ 109:
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("next/dist/shared/lib/router/utils/is-local-url.js");
 
 /***/ }),
@@ -180,6 +223,7 @@ module.exports = require("next/dist/shared/lib/router/utils/is-local-url.js");
 /***/ 854:
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("next/dist/shared/lib/router/utils/parse-path.js");
 
 /***/ }),
@@ -187,6 +231,7 @@ module.exports = require("next/dist/shared/lib/router/utils/parse-path.js");
 /***/ 297:
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("next/dist/shared/lib/router/utils/remove-trailing-slash.js");
 
 /***/ }),
@@ -194,6 +239,7 @@ module.exports = require("next/dist/shared/lib/router/utils/remove-trailing-slas
 /***/ 782:
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("next/dist/shared/lib/router/utils/resolve-href.js");
 
 /***/ }),
@@ -201,6 +247,7 @@ module.exports = require("next/dist/shared/lib/router/utils/resolve-href.js");
 /***/ 232:
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("next/dist/shared/lib/utils.js");
 
 /***/ }),
@@ -208,6 +255,7 @@ module.exports = require("next/dist/shared/lib/utils.js");
 /***/ 689:
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("react");
 
 /***/ })
