@@ -1,9 +1,9 @@
 {
   "/_app": "pages/_app.js",
-  "/chat": "pages/chat.html",
   "/_error": "pages/_error.js",
-  "/trening-hode": "pages/trening-hode.html",
   "/": "pages/index.html",
+  "/chat": "pages/chat.html",
+  "/trening-hode": "pages/trening-hode.html",
   "/trening-kropp": "pages/trening-kropp.html",
   "/om": "pages/om.html",
   "/_document": "pages/_document.js",
