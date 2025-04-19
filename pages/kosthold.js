@@ -15,6 +15,7 @@ export default function Kosthold() {
 
   const [plan, setPlan] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [chat, setChat] = useState('');
   const [history, setHistory] = useState([]);
 
@@ -97,16 +98,25 @@ Ikke bruk <html>, <head>, eller <body> tags.`;
 
   const handleSubmit = async () => {
     setLoading(true);
+    setError(null);
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: generatePrompt() }),
       });
+      
       const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.error || 'En feil oppstod ved generering av kostholdsplan');
+      }
+      
       setPlan(data.result || 'Ingen respons.');
     } catch (err) {
-      setPlan('Feil ved generering av kostholdsplan.');
+      console.error('Feil ved generering:', err);
+      setError(err.message || 'En feil oppstod ved generering av kostholdsplan');
+      setPlan('');
     }
     setLoading(false);
   };
@@ -115,6 +125,7 @@ Ikke bruk <html>, <head>, eller <body> tags.`;
     if (!chat.trim()) return;
     const q = chat;
     setChat('');
+    setError(null);
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
@@ -123,9 +134,17 @@ Ikke bruk <html>, <head>, eller <body> tags.`;
           message: `Du er en AI kostholdsekspert. Svar profesjonelt i HTML (<p>, <ul>, <li>) på: ${q}`
         }),
       });
+      
       const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.error || 'En feil oppstod ved kommunikasjon med AI');
+      }
+      
       setHistory((prev) => [...prev, { q, a: data.result || 'Ingen svar' }]);
     } catch (err) {
+      console.error('Feil i chat:', err);
+      setError(err.message || 'En feil oppstod ved kommunikasjon med AI');
       setHistory((prev) => [...prev, { q, a: 'Feil under henting av svar.' }]);
     }
   };
@@ -139,6 +158,19 @@ Ikke bruk <html>, <head>, eller <body> tags.`;
     <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-gray-800 text-white p-6">
       <div className="max-w-3xl mx-auto card space-y-4">
         <h1 className="text-2xl font-bold text-center">Din personlige kostholdsplan</h1>
+
+        {error && (
+          <div className="bg-red-500/20 border border-red-500 text-red-200 px-4 py-3 rounded-lg">
+            <p className="font-semibold">Feil oppstod:</p>
+            <p>{error}</p>
+            {error.includes('API-nøkkel') && (
+              <p className="mt-2 text-sm">
+                Dette er en teknisk feil som krever oppdatering av API-nøkkelen. 
+                Vennligst kontakt administrator for hjelp.
+              </p>
+            )}
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <input name="navn" placeholder="Navn" onChange={handleChange} className="input-field" />
@@ -156,7 +188,11 @@ Ikke bruk <html>, <head>, eller <body> tags.`;
           <input name="allergier" placeholder="Allergier / preferanser" onChange={handleChange} className="input-field" />
         </div>
 
-        <button onClick={handleSubmit} className="btn-primary w-full">
+        <button 
+          onClick={handleSubmit} 
+          className={`btn-primary w-full ${loading ? 'opacity-75 cursor-not-allowed' : ''}`}
+          disabled={loading}
+        >
           {loading ? 'Genererer...' : 'Generer kostholdsplan'}
         </button>
 

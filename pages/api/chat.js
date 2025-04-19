@@ -20,6 +20,7 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.log("Starter API-kall til OpenRouter...");
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -43,13 +44,25 @@ export default async function handler(req, res) {
       }),
     });
 
+    console.log("API-respons status:", response.status);
+    
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       console.error("OpenRouter API feil:", {
         status: response.status,
         statusText: response.statusText,
-        error: errorData
+        error: errorData,
+        headers: Object.fromEntries(response.headers.entries())
       });
+
+      // Spesifikk håndtering av 401-feil
+      if (response.status === 401) {
+        return res.status(401).json({ 
+          error: "Autentiseringsfeil med API-nøkkel",
+          details: "API-nøkkelen er enten ugyldig eller utløpt. Vennligst kontakt administrator."
+        });
+      }
+
       return res.status(response.status).json({ 
         error: "Feil ved kommunikasjon med AI-tjenesten",
         details: process.env.NODE_ENV === 'development' ? errorData : undefined
@@ -57,6 +70,10 @@ export default async function handler(req, res) {
     }
 
     const data = await response.json();
+    console.log("API-respons mottatt:", { 
+      hasChoices: !!data.choices,
+      firstChoice: data.choices?.[0]?.message ? "finnes" : "mangler"
+    });
 
     if (!data.choices || !data.choices[0]?.message?.content) {
       console.error("Ugyldig svar fra OpenRouter:", data);
