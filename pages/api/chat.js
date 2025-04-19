@@ -9,8 +9,14 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Melding mangler" });
   }
 
-  if (!process.env.OPENROUTER_API_KEY) {
-    return res.status(500).json({ error: "API-nøkkel mangler i miljøvariabler (.env.local)" });
+  // Check for API key with better error message
+  const apiKey = process.env.OPENROUTER_API_KEY;
+  if (!apiKey) {
+    console.error("OPENROUTER_API_KEY mangler i miljøvariablene");
+    return res.status(500).json({ 
+      error: "API-nøkkel mangler. Vennligst kontakt administrator.",
+      details: process.env.NODE_ENV === 'development' ? "OPENROUTER_API_KEY er ikke satt i .env.local" : "API-nøkkel mangler i produksjonsmiljøet"
+    });
   }
 
   try {
@@ -18,7 +24,9 @@ export default async function handler(req, res) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        "Authorization": `Bearer ${apiKey}`,
+        "HTTP-Referer": process.env.NEXT_PUBLIC_SITE_URL || "https://coremind.vercel.app",
+        "X-Title": "CoreMind App"
       },
       body: JSON.stringify({
         model: "openai/gpt-3.5-turbo",
@@ -35,6 +43,19 @@ export default async function handler(req, res) {
       }),
     });
 
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      console.error("OpenRouter API feil:", {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorData
+      });
+      return res.status(response.status).json({ 
+        error: "Feil ved kommunikasjon med AI-tjenesten",
+        details: process.env.NODE_ENV === 'development' ? errorData : undefined
+      });
+    }
+
     const data = await response.json();
 
     if (!data.choices || !data.choices[0]?.message?.content) {
@@ -47,6 +68,9 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error("Feil i /api/chat:", error);
-    return res.status(500).json({ error: "Serverfeil. Se loggen for mer info." });
+    return res.status(500).json({ 
+      error: "Serverfeil ved generering av svar",
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 }
