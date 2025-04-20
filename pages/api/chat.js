@@ -11,6 +11,15 @@ export default async function handler(req, res) {
 
   // Check for API key with better error message
   const apiKey = process.env.OPENROUTER_API_KEY;
+  
+  // Log API key status (without exposing the actual key)
+  console.log("API-nøkkel status:", {
+    exists: !!apiKey,
+    length: apiKey ? apiKey.length : 0,
+    startsWith: apiKey ? apiKey.substring(0, 4) + "..." : "none",
+    environment: process.env.NODE_ENV
+  });
+  
   if (!apiKey) {
     console.error("OPENROUTER_API_KEY mangler i miljøvariablene");
     return res.status(500).json({ 
@@ -21,11 +30,15 @@ export default async function handler(req, res) {
 
   try {
     console.log("Starter API-kall til OpenRouter...");
+    
+    // Trim the API key to remove any whitespace
+    const trimmedApiKey = apiKey.trim();
+    
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`,
+        "Authorization": `Bearer ${trimmedApiKey}`,
         "HTTP-Referer": process.env.NEXT_PUBLIC_SITE_URL || "https://coremind.vercel.app",
         "X-Title": "CoreMind App"
       },
@@ -45,6 +58,7 @@ export default async function handler(req, res) {
     });
 
     console.log("API-respons status:", response.status);
+    console.log("API-respons headers:", Object.fromEntries(response.headers.entries()));
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));

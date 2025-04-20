@@ -97,6 +97,6 @@ export default function Om() {
           </section>
         </div>
       </main>
-    </div>
+      </div>
   );
 }

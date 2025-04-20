@@ -2,9 +2,8 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/": "pages/index.js",
-  "/om": "pages/om.js",
-  "/coremind-trening": "pages/coremind-trening.js",
+  "/drommetolkning": "pages/drommetolkning.js",
   "/coremind-mental": "pages/coremind-mental.js",
-  "/drommetolkning": "pages/drommetolkning.js"
+  "/": "pages/index.js",
+  "/kosthold": "pages/kosthold.js"
 }
