@@ -190,47 +190,62 @@ Svar i HTML med kun <h1>-<h3>, <ul>, <li>, <p>. Ikke bruk <html>, <head> eller <
 
         <div className="grid md:grid-cols-2 gap-6">
           {/* Chat Section */}
-          <div className="bg-gradient-to-br from-zinc-900 to-zinc-800 p-6 rounded-lg shadow-lg border border-zinc-700">
-            <h2 className="text-xl font-semibold mb-4 text-green-400">Chat med AI Ernæringsassistent</h2>
-            {chatHistory.length === 0 ? (
-              <div className="text-gray-400 text-center mb-4">
-                <p className="mb-2">Start en samtale med AI-assistenten for å få personlig veiledning.</p>
-                <p className="text-sm">Du kan spørre om kosthold, ernæring, eller få støtte med kostholdsmål.</p>
-              </div>
-            ) : (
-              <div className="bg-zinc-800/80 rounded p-4 h-80 overflow-y-auto mb-4 border border-zinc-700">
-                {chatHistory.map((entry, idx) => (
-                  <div key={idx} className="mb-4">
-                    <div className="mb-2">
-                      <p className="text-gray-400">Du:</p>
-                      <p>{entry.question}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-400">AI-assistent:</p>
-                      <div className="prose prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: entry.answer }} />
-                    </div>
+          <div className="bg-emerald-800/50 p-4 sm:p-6 rounded-xl shadow-lg border border-emerald-600">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4 flex items-center">
+              <span className="mr-2">🥗</span> Chat med Ernæringscoach
+            </h2>
+            
+            <div className="bg-emerald-900/50 p-3 sm:p-4 rounded-lg max-h-[400px] sm:max-h-[500px] overflow-y-auto mb-4 scroll-smooth">
+              {chatHistory.length === 0 ? (
+                <div className="text-emerald-200 text-center">
+                  <p className="mb-2 text-base sm:text-lg font-medium">Start en samtale med din ernæringscoach for å få personlig veiledning.</p>
+                  <p className="text-emerald-300 text-sm sm:text-base">Du kan få hjelp med kosthold, måltidsplanlegging, og andre ernæringsrelaterte spørsmål.</p>
+                </div>
+              ) : (
+                chatHistory.map((entry, idx) => (
+                  <div key={idx} className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
+                    {entry.question && (
+                      <div className="flex items-start">
+                        <div className="bg-emerald-800/60 p-2 sm:p-3 rounded-lg max-w-[85%] sm:max-w-[80%]">
+                          <p className="font-semibold text-emerald-300 mb-1 text-sm sm:text-base">Du</p>
+                          <p className="text-emerald-100 text-sm sm:text-base">{entry.question}</p>
+                        </div>
+                      </div>
+                    )}
+                    {(entry.answer || entry.isLoading) && (
+                      <div className="flex items-start justify-end">
+                        <div className="bg-emerald-700/60 p-2 sm:p-3 rounded-lg max-w-[85%] sm:max-w-[80%]">
+                          <p className="font-semibold text-emerald-300 mb-1 text-sm sm:text-base">Ernæringscoach</p>
+                          {entry.isLoading ? (
+                            <p className="animate-pulse text-emerald-200 text-sm sm:text-base">Skriver...</p>
+                          ) : (
+                            <div className="prose prose-sm sm:prose prose-invert prose-p:text-emerald-100 prose-headings:text-emerald-200 prose-strong:text-emerald-200 prose-li:text-emerald-100 max-w-none" dangerouslySetInnerHTML={{ __html: entry.answer }} />
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
-                ))}
-                <div ref={chatEndRef} />
-              </div>
-            )}
+                ))
+              )}
+              <div ref={chatEndRef} />
+            </div>
 
             <div className="flex gap-2">
               <textarea
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Skriv et spørsmål og trykk Enter (Shift+Enter for linjeskift)"
-                className="flex-grow bg-zinc-800 border border-zinc-700 rounded p-2 text-white placeholder-gray-400 focus:outline-none focus:border-green-500"
+                placeholder="Still spørsmål om kosthold, ernæring eller matplaner..."
+                className="flex-grow p-2 sm:p-3 rounded-lg bg-emerald-900/50 border border-emerald-600 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400 focus:outline-none resize-none text-emerald-100 placeholder-emerald-500 text-sm sm:text-base"
                 rows="2"
               />
               <button
                 onClick={() => handleChatSubmit(chatInput)}
                 disabled={isLoading || !chatInput.trim()}
-                className={`px-4 py-2 rounded ${
+                className={`px-4 sm:px-6 py-2 rounded-lg font-semibold transition-colors text-sm sm:text-base ${
                   isLoading || !chatInput.trim()
-                    ? 'bg-green-500/50 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700'
+                    ? 'bg-emerald-700/50 text-emerald-400/50 cursor-not-allowed'
+                    : 'bg-emerald-600 hover:bg-emerald-500 text-white'
                 }`}
               >
                 Send

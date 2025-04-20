@@ -73,8 +73,8 @@ Formater svaret i HTML med <section>, <h2>, <p> tags.`
               value={dreamInput}
               onChange={(e) => setDreamInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Beskriv drømmen din her... (Trykk Enter for å sende, Shift+Enter for linjeskift)"
-              className="w-full h-32 sm:h-40 p-3 sm:p-4 rounded-lg bg-purple-900/50 border border-purple-600 focus:border-purple-400 focus:ring-2 focus:ring-purple-400 focus:outline-none text-purple-100 placeholder-purple-500 font-medium text-sm sm:text-base"
+              placeholder="Fortell om drømmen din og få hjelp til å tolke den..."
+              className="w-full h-32 sm:h-40 p-3 sm:p-4 rounded-lg bg-purple-900/50 border border-purple-600 focus:border-purple-400 focus:ring-2 focus:ring-purple-400 focus:outline-none text-purple-100 placeholder-purple-500 text-sm sm:text-base"
             />
             
             <button

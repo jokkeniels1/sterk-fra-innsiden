@@ -325,7 +325,7 @@ export default function MentalStyrke() {
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Skriv din melding her... (Trykk Enter for å sende, Shift+Enter for linjeskift)"
+                placeholder="Still spørsmål om mental trening, meditasjon eller stressmestring..."
                 className="flex-grow p-2 sm:p-3 rounded-lg bg-indigo-900/50 border border-indigo-600 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400 focus:outline-none resize-none text-indigo-100 placeholder-indigo-500 text-sm sm:text-base"
                 rows="2"
               />
