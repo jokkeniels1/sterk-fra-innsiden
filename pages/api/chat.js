@@ -42,7 +42,7 @@ export default async function handler(req, res) {
         'X-Title': 'CoreMind App'
       },
       data: {
-        model: "mistralai/mistral-7b-instruct",
+        model: "openai/gpt-3.5-turbo",
         messages: [
           {
             role: "system",

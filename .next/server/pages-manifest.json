@@ -2,8 +2,9 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/drommetolkning": "pages/drommetolkning.js",
+  "/coremind-kosthold": "pages/coremind-kosthold.js",
   "/coremind-mental": "pages/coremind-mental.js",
+  "/drommetolkning": "pages/drommetolkning.js",
   "/api/chat": "pages/api/chat.js",
   "/coremind-trening": "pages/coremind-trening.js"
 }
