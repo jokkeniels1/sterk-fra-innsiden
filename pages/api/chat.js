@@ -38,8 +38,8 @@ export default async function handler(req, res) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${trimmedApiKey}`,
-        "HTTP-Referer": process.env.NEXT_PUBLIC_SITE_URL || "https://coremind.vercel.app",
+        "Authorization": trimmedApiKey,
+        "HTTP-Referer": "http://localhost:3003",
         "X-Title": "CoreMind App"
       },
       body: JSON.stringify({
@@ -61,7 +61,20 @@ export default async function handler(req, res) {
     console.log("API-respons headers:", Object.fromEntries(response.headers.entries()));
     
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
+      let errorData;
+      try {
+        const text = await response.text();
+        try {
+          errorData = JSON.parse(text);
+        } catch (e) {
+          console.error("Kunne ikke parse error response som JSON:", text);
+          errorData = { error: { message: text } };
+        }
+      } catch (e) {
+        console.error("Kunne ikke lese error response:", e);
+        errorData = { error: { message: "Kunne ikke lese feilmelding" } };
+      }
+
       console.error("OpenRouter API feil:", {
         status: response.status,
         statusText: response.statusText,
@@ -83,7 +96,20 @@ export default async function handler(req, res) {
       });
     }
 
-    const data = await response.json();
+    let data;
+    try {
+      const text = await response.text();
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        console.error("Kunne ikke parse response som JSON:", text);
+        return res.status(500).json({ error: "Ugyldig svar fra AI-tjenesten" });
+      }
+    } catch (e) {
+      console.error("Kunne ikke lese response:", e);
+      return res.status(500).json({ error: "Kunne ikke lese svar fra AI-tjenesten" });
+    }
+
     console.log("API-respons mottatt:", { 
       hasChoices: !!data.choices,
       firstChoice: data.choices?.[0]?.message ? "finnes" : "mangler"

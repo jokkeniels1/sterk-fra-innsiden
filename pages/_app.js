@@ -47,7 +47,7 @@ export default function App({ Component, pageProps }) {
               <Link href="/" className="text-gray-300 hover:text-white transition-colors duration-200">Hjem</Link>
               <Link href="/coremind-mental" className="text-gray-300 hover:text-white transition-colors duration-200">Mental trening</Link>
               <Link href="/coremind-trening" className="text-gray-300 hover:text-white transition-colors duration-200">Fysisk trening</Link>
-              <Link href="/kosthold" className="text-gray-300 hover:text-white transition-colors duration-200">Kosthold</Link>
+              <Link href="/coremind-kosthold" className="text-gray-300 hover:text-white transition-colors duration-200">Kosthold</Link>
               <Link href="/drommetolkning" className="text-gray-300 hover:text-white transition-colors duration-200">Drømmetolkning</Link>
               <Link href="/om" className="text-gray-300 hover:text-white transition-colors duration-200">Om CoreMind</Link>
             </div>
@@ -130,7 +130,7 @@ export default function App({ Component, pageProps }) {
                 <span className="text-lg font-medium">Fysisk trening</span>
               </Link>
               <Link 
-                href="/kosthold" 
+                href="/coremind-kosthold" 
                 className="flex items-center p-4 hover:bg-white/10 transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >

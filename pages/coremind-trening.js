@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { generatePDF } from '../utils/pdfGenerator';
 import { jsPDF } from 'jspdf';
+import Head from 'next/head';
+import Link from 'next/link';
 
-export default function ProgramGenerator() {
+export default function CoreMindTrening() {
   const [formData, setFormData] = useState({
     alder: '',
     kjonn: '',
@@ -113,7 +115,7 @@ Svar i HTML med kun <h1>-<h3>, <ul>, <li>, <p>. Ikke bruk <html>, <head> eller <
     // Add the question immediately to the chat history
     setChatHistory((prev) => [...prev, { 
       question, 
-      answer: '<div class="animate-pulse">AI-treneren skriver...</div>',
+      answer: '<div class="animate-pulse">AI-assistenten skriver...</div>',
       isLoading: true 
     }]);
     setIsLoading(true);
@@ -123,7 +125,7 @@ Svar i HTML med kun <h1>-<h3>, <ul>, <li>, <p>. Ikke bruk <html>, <head> eller <
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message: `Som en profesjonell personlig trener, vennligst svar på følgende spørsmål om trening: ${question}`
+          message: `Som en AI-assistent med ekspertise i trening og fysisk aktivitet, vennligst svar på følgende spørsmål: ${question}`
         }),
       });
 
@@ -201,58 +203,381 @@ Svar i HTML med kun <h1>-<h3>, <ul>, <li>, <p>. Ikke bruk <html>, <head> eller <
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-800 to-blue-950 text-white p-4 sm:p-8 pt-16 sm:pt-20">
-      <div className="max-w-3xl mx-auto space-y-6 sm:space-y-8">
-        <div className="bg-blue-700 p-4 sm:p-6 rounded-xl shadow-xl">
-          <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center">
-            Treningsveiledning
-          </h1>
-          
-          <div className="chat-container bg-blue-900/50 rounded-lg p-4 sm:p-6 mb-4 sm:mb-6 max-h-[500px] overflow-y-auto">
-            <div className="space-y-4">
-              {chatHistory.map((message, index) => (
-                <div
-                  key={index}
-                  className={`p-3 sm:p-4 rounded-lg ${
-                    message.role === 'user'
-                      ? 'bg-blue-800/60 ml-8 sm:ml-12'
-                      : 'bg-blue-700/60 mr-8 sm:mr-12'
-                  }`}
-                >
-                  <p className="text-sm sm:text-base text-blue-100">{message.content}</p>
-                </div>
-              ))}
-              {isLoading && (
-                <div className="bg-blue-700/60 p-3 sm:p-4 rounded-lg mr-8 sm:mr-12">
-                  <p className="text-sm sm:text-base text-blue-200">Tenker...</p>
-                </div>
-              )}
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white p-8">
+      <Head>
+        <title>CoreMind - Fysisk Trening</title>
+        <meta name="description" content="Profesjonell fysisk trening med CoreMind" />
+      </Head>
+
+      <div className="max-w-4xl mx-auto">
+        <header className="text-center mb-8">
+          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">Få ditt personlige treningsprogram</h1>
+          <p className="text-gray-400">Fyll ut skjemaet under for å få et skreddersydd treningsprogram</p>
+        </header>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* Chat Section */}
+          <div className="bg-gradient-to-br from-zinc-900 to-zinc-800 p-6 rounded-lg shadow-lg border border-zinc-700">
+            <h2 className="text-xl font-semibold mb-4 text-blue-400">Chat med AI Treningsassistent</h2>
+            {chatHistory.length === 0 ? (
+              <div className="text-gray-400 text-center mb-4">
+                <p className="mb-2">Start en samtale med AI-assistenten for å få personlig veiledning.</p>
+                <p className="text-sm">Du kan spørre om trening, øvelser, eller få støtte med treningsutfordringer.</p>
+              </div>
+            ) : (
+              <div className="bg-zinc-800/80 rounded p-4 h-80 overflow-y-auto mb-4 border border-zinc-700">
+                {chatHistory.map((entry, idx) => (
+                  <div key={idx} className="mb-4">
+                    <div className="mb-2">
+                      <p className="text-gray-400">Du:</p>
+                      <p>{entry.question}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-400">AI-assistent:</p>
+                      <div className="prose prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: entry.answer }} />
+                    </div>
+                  </div>
+                ))}
+                <div ref={chatEndRef} />
+              </div>
+            )}
+
+            <div className="flex gap-2">
+              <textarea
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Skriv et spørsmål og trykk Enter (Shift+Enter for linjeskift)"
+                className="flex-grow bg-zinc-800 border border-zinc-700 rounded p-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                rows="2"
+              />
+              <button
+                onClick={() => handleChatSubmit(chatInput)}
+                disabled={isLoading || !chatInput.trim()}
+                className={`px-4 py-2 rounded ${
+                  isLoading || !chatInput.trim()
+                    ? 'bg-blue-500/50 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700'
+                }`}
+              >
+                Send
+              </button>
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <textarea
-              value={chatInput}
-              onChange={(e) => setChatInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Still spørsmål om trening her... (Trykk Enter for å sende, Shift+Enter for linjeskift)"
-              className="w-full h-24 sm:h-32 p-3 sm:p-4 rounded-lg bg-blue-900/50 border border-blue-600 focus:border-blue-400 focus:ring-2 focus:ring-blue-400 focus:outline-none text-blue-100 placeholder-blue-500 font-medium text-sm sm:text-base"
-            />
-            
-            <button
-              type="submit"
-              disabled={isLoading || !chatInput.trim()}
-              className={`w-full py-2 sm:py-3 px-4 sm:px-6 rounded-lg font-semibold transition-all text-sm sm:text-base ${
-                isLoading || !chatInput.trim()
-                  ? 'bg-blue-700/50 text-blue-400/50 cursor-not-allowed'
-                  : 'bg-blue-600 hover:bg-blue-500 text-white'
-              }`}
-            >
-              Send
-            </button>
-          </form>
+          {/* Form Section */}
+          <div className="bg-gradient-to-br from-zinc-900 to-zinc-800 p-6 rounded-lg shadow-lg border border-zinc-700">
+            <h2 className="text-xl font-semibold mb-4 text-blue-400">Treningsprogram Generator</h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block mb-1">Alder</label>
+                <input
+                  type="number"
+                  name="alder"
+                  value={formData.alder}
+                  onChange={handleChange}
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white focus:outline-none focus:border-blue-500"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block mb-1">Kjønn</label>
+                <select
+                  name="kjonn"
+                  value={formData.kjonn}
+                  onChange={handleChange}
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white focus:outline-none focus:border-blue-500"
+                  required
+                >
+                  <option value="">Velg kjønn</option>
+                  <option value="mann">Mann</option>
+                  <option value="kvinne">Kvinne</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block mb-1">Høyde (cm)</label>
+                <input
+                  type="number"
+                  name="hoyde"
+                  value={formData.hoyde}
+                  onChange={handleChange}
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white focus:outline-none focus:border-blue-500"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block mb-1">Vekt (kg)</label>
+                <input
+                  type="number"
+                  name="vekt"
+                  value={formData.vekt}
+                  onChange={handleChange}
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white focus:outline-none focus:border-blue-500"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block mb-1">Treningsnivå</label>
+                <select
+                  name="treningsniva"
+                  value={formData.treningsniva}
+                  onChange={handleChange}
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white focus:outline-none focus:border-blue-500"
+                  required
+                >
+                  <option value="">Velg treningsnivå</option>
+                  <option value="nybegynner">Nybegynner</option>
+                  <option value="moderat">Moderat</option>
+                  <option value="avansert">Avansert</option>
+                </select>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className={`w-full py-2 rounded ${
+                  loading
+                    ? 'bg-blue-500/50 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700'
+                }`}
+              >
+                {loading ? 'Genererer...' : 'Generer treningsprogram'}
+              </button>
+            </form>
+          </div>
         </div>
+
+        {/* Results Section */}
+        {program && (
+          <div className="mt-6 bg-gradient-to-br from-zinc-900 to-zinc-800 p-6 rounded-lg shadow-lg border border-zinc-700">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold text-blue-400">Ditt Treningsprogram</h2>
+              <button
+                onClick={handleGeneratePDFWithJS}
+                className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 rounded"
+              >
+                Last ned PDF
+              </button>
+            </div>
+            <div className="prose prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: program }} />
+          </div>
+        )}
       </div>
+
+      {/* Details Popup */}
+      {showDetailsPopup && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-br from-zinc-900 to-zinc-800 rounded-lg p-6 max-w-md w-full shadow-xl border border-zinc-700">
+            <h2 className="text-xl font-bold mb-4 text-blue-400">Viktige detaljer før treningsprogram generering</h2>
+            <p className="mb-4 text-gray-400">For å lage et optimalt treningsprogram, trenger vi noen viktige detaljer:</p>
+            
+            <div className="space-y-4 mb-6">
+              <div>
+                <label className="block text-sm font-medium mb-1">Hva er ditt mål med treningen?</label>
+                <div className="space-y-2">
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name="mal"
+                      value="styrke"
+                      checked={formData.mal.includes('styrke')}
+                      onChange={handleChange}
+                      className="mr-2"
+                    />
+                    <span>Øke styrke</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name="mal"
+                      value="muskeloppbygging"
+                      checked={formData.mal.includes('muskeloppbygging')}
+                      onChange={handleChange}
+                      className="mr-2"
+                    />
+                    <span>Muskeloppbygging</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name="mal"
+                      value="utholdenhet"
+                      checked={formData.mal.includes('utholdenhet')}
+                      onChange={handleChange}
+                      className="mr-2"
+                    />
+                    <span>Bedre utholdenhet</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name="mal"
+                      value="vektnedgang"
+                      checked={formData.mal.includes('vektnedgang')}
+                      onChange={handleChange}
+                      className="mr-2"
+                    />
+                    <span>Vektnedgang</span>
+                  </label>
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">Hvilket utstyr har du tilgang til?</label>
+                <div className="space-y-2">
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name="utstyr"
+                      value="ingen"
+                      checked={formData.utstyr.includes('ingen')}
+                      onChange={handleChange}
+                      className="mr-2"
+                    />
+                    <span>Ingen utstyr</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name="utstyr"
+                      value="hjemme"
+                      checked={formData.utstyr.includes('hjemme')}
+                      onChange={handleChange}
+                      className="mr-2"
+                    />
+                    <span>Hjemmetreningsutstyr</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name="utstyr"
+                      value="studio"
+                      checked={formData.utstyr.includes('studio')}
+                      onChange={handleChange}
+                      className="mr-2"
+                    />
+                    <span>Treningsstudio</span>
+                  </label>
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">Split type</label>
+                <select
+                  name="splitType"
+                  value={formData.splitType}
+                  onChange={handleChange}
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white focus:outline-none focus:border-blue-500"
+                >
+                  <option value="full kropp">Full kropp</option>
+                  <option value="2-split">2-split (Øvre/Undre kropp)</option>
+                  <option value="3-split">3-split (Push/Pull/Legs)</option>
+                  <option value="4-split">4-split</option>
+                  <option value="5-split">5-split</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">Antall treningsdager per uke</label>
+                <select
+                  name="dager"
+                  value={formData.dager}
+                  onChange={handleChange}
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white focus:outline-none focus:border-blue-500"
+                >
+                  <option value="2">2 dager</option>
+                  <option value="3">3 dager</option>
+                  <option value="4">4 dager</option>
+                  <option value="5">5 dager</option>
+                  <option value="6">6 dager</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">Treningsøkt varighet</label>
+                <select
+                  name="oktTid"
+                  value={formData.oktTid}
+                  onChange={handleChange}
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white focus:outline-none focus:border-blue-500"
+                >
+                  <option value="20-30 min">20-30 minutter</option>
+                  <option value="30-45 min">30-45 minutter</option>
+                  <option value="45-60 min">45-60 minutter</option>
+                  <option value="60+ min">60+ minutter</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    name="inkluderMaksvekt"
+                    checked={formData.inkluderMaksvekt}
+                    onChange={handleChange}
+                    className="mr-2"
+                  />
+                  <span className="text-sm font-medium">Inkluder maksvekt i øvelser</span>
+                </label>
+              </div>
+              
+              {formData.inkluderMaksvekt && (
+                <div className="space-y-2 pl-4 border-l-2 border-zinc-700">
+                  <div>
+                    <label className="block text-sm mb-1">Benkpress (kg)</label>
+                    <input
+                      type="number"
+                      name="maksvekt.benkpress"
+                      value={formData.maksvekt.benkpress}
+                      onChange={handleChange}
+                      className="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white focus:outline-none focus:border-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm mb-1">Knebøy (kg)</label>
+                    <input
+                      type="number"
+                      name="maksvekt.kneboy"
+                      value={formData.maksvekt.kneboy}
+                      onChange={handleChange}
+                      className="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white focus:outline-none focus:border-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm mb-1">Markløft (kg)</label>
+                    <input
+                      type="number"
+                      name="maksvekt.markloft"
+                      value={formData.maksvekt.markloft}
+                      onChange={handleChange}
+                      className="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white focus:outline-none focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            <div className="flex justify-end gap-4">
+              <button 
+                onClick={() => setShowDetailsPopup(false)} 
+                className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded"
+              >
+                Avbryt
+              </button>
+              <button 
+                onClick={handleGenerateProgram} 
+                className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 rounded"
+              >
+                Generer program
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
