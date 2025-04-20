@@ -53,6 +53,40 @@ export default function CoreMindKosthold() {
   };
 
   const generatePrompt = (data) => {
+    // Beregn BMR basert på Harris-Benedict formelen
+    const bmrInstructions = `
+Beregn først BMR (Basal Metabolic Rate) basert på Harris-Benedict formelen:
+- For menn: BMR = 88.362 + (13.397 × vekt i kg) + (4.799 × høyde i cm) - (5.677 × alder)
+- For kvinner: BMR = 447.593 + (9.247 × vekt i kg) + (3.098 × høyde i cm) - (4.330 × alder)
+
+Deretter beregn TDEE (Total Daily Energy Expenditure) ved å multiplisere BMR med aktivitetsfaktor:
+- Stillesittende: BMR × 1.2
+- Lett aktiv: BMR × 1.375
+- Moderat aktiv: BMR × 1.55
+- Veldig aktiv: BMR × 1.725
+- Ekstremt aktiv: BMR × 1.9
+
+Juster deretter daglig kaloriinntak basert på mål:
+- Vektnedgang: TDEE - 500 kcal
+- Vedlikeholde vekt: TDEE
+- Muskelvekst: TDEE + 300-500 kcal
+
+Makrofordeling basert på mål:
+For vektnedgang:
+- Protein: 2-2.4g per kg kroppsvekt
+- Fett: 20-25% av totale kalorier
+- Karbohydrater: Resten av kaloriene
+
+For muskelvekst:
+- Protein: 1.8-2.2g per kg kroppsvekt
+- Fett: 25-30% av totale kalorier
+- Karbohydrater: Resten av kaloriene
+
+For vedlikehold:
+- Protein: 1.6-2g per kg kroppsvekt
+- Fett: 25-30% av totale kalorier
+- Karbohydrater: Resten av kaloriene`;
+
     return `Du er en ernæringsekspert. Lag en detaljert kostholdsplan som følger denne strukturen:
 
 1. BRUKERDATA
@@ -66,29 +100,36 @@ export default function CoreMindKosthold() {
 - Allergier/Preferanser: ${data.allergier.length > 0 ? data.allergier.join(', ') : 'Ingen'}
 
 2. KOSTHOLDSPLAN BEREGNINGER
-- Beregn TDEE (Totalt Daglig Energiforbruk) basert på brukerdata
-- Beregn makronæringsfordeling basert på mål
-- Spesifiser protein, karbohydrater og fett i gram og prosent
-- Inkluder anbefalte supplementer hvis relevant
+${bmrInstructions}
+
+Vis tydelig:
+- Beregnet BMR
+- Beregnet TDEE
+- Justert daglig kaloriinntak basert på mål
+- Makrofordeling i gram og prosent
+- Måltidsfordeling av kalorier og makroer
+- Anbefalte supplementer hvis relevant
 
 3. DAGLIG KOSTHOLDSPLAN
 Lag en detaljert plan med nøyaktig ${data.maaltider} hovedmåltider og ${data.snacks} mellommåltider.
 For hvert måltid, spesifiser:
-- Måltidsnavn
-- Ingredienser med mengder
-- Næringsinnhold (kalorier, protein, karbohydrater, fett)
+- Måltidsnavn og tidspunkt
+- Ingredienser med nøyaktige mengder i gram
+- Næringsinnhold per måltid (kalorier, protein, karbohydrater, fett)
 - Tilberedningstips tilpasset ${data.koking} kokekunnskap
+Sørg for at summen av alle måltider matcher det beregnede daglige kaloriinntaket.
 
 4. UKENTLIG MIDDAGSPLAN
 Lag en variert ukesplan for middager som passer med brukerens ${data.budsjett} budsjett.
 For hver middag, spesifiser:
 - Rett
-- Ingredienser med mengder
+- Ingredienser med nøyaktige mengder
 - Næringsinnhold
 - Tilberedning
+- Estimert kostnad per porsjon
 
 5. HANDLELISTE
-Organiser ingrediensene i kategorier:
+Organiser ingrediensene i kategorier med mengder:
 - Kjøtt/Fisk/Egg
 - Meieriprodukter
 - Frukt og grønnsaker
@@ -97,13 +138,15 @@ Organiser ingrediensene i kategorier:
 - Annet
 
 6. OPPSUMMERING
-- Totale daglige kalorier
-- Makronæringsfordeling
+- Totale daglige kalorier og fordeling per måltid
+- Makronæringsfordeling med gram og prosent
 - Estimert kostnad per uke
 - Tips for måltidsprep
 - Oppbevaringstips
+- Forslag til justeringer basert på fremgang
 
 Svar i HTML-format med <h1>-<h3> for overskrifter, <ul> og <li> for lister, og <p> for tekst.
+Bruk <table> for næringsinformasjon og måltidsplaner.
 Ikke inkluder <html>, <head> eller <body> tagger.
 Bruk norsk språk og metriske måleenheter.`;
   };
@@ -260,7 +303,6 @@ Bruk norsk språk og metriske måleenheter.`;
                   <option value="">Velg kjønn</option>
                   <option value="mann">Mann</option>
                   <option value="kvinne">Kvinne</option>
-                  <option value="annet">Annet</option>
                 </select>
               </div>
               <div>
