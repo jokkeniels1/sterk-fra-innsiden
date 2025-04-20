@@ -17,7 +17,10 @@ export default function CoreMindKosthold() {
     maaltider: '3',
     snacks: '2',
     koking: 'enkel',
-    budsjett: 'moderat'
+    budsjett: 'moderat',
+    treningsdager: '3',
+    matpreferanser: [],
+    kostrestriksjoner: []
   });
 
   const [loading, setLoading] = useState(false);
@@ -50,14 +53,59 @@ export default function CoreMindKosthold() {
   };
 
   const generatePrompt = (data) => {
-    return `Du er en ernæringsekspert. Lag et personlig kosthold basert på følgende informasjon:
-Alder: ${data.alder}, Kjønn: ${data.kjonn}, Høyde: ${data.hoyde}, Vekt: ${data.vekt}
-Aktivitetsnivå: ${data.aktivitetsniva}, Mål: ${data.mal.join(', ')}
-Allergier: ${data.allergier.join(', ')}, Preferanser: ${data.preferanser.join(', ')}
-Antall måltider: ${data.maaltider}, Antall snacks: ${data.snacks}
-Kokekunnskap: ${data.koking}, Budsjett: ${data.budsjett}
+    return `Du er en ernæringsekspert. Lag en detaljert kostholdsplan som følger denne strukturen:
 
-Svar i HTML med kun <h1>-<h3>, <ul>, <li>, <p>. Ikke bruk <html>, <head> eller <body>.`;
+1. BRUKERDATA
+- Navn: [Bruker]
+- Alder: ${data.alder}
+- Kjønn: ${data.kjonn}
+- Høyde: ${data.hoyde} cm
+- Vekt: ${data.vekt} kg
+- Aktivitetsnivå: ${data.aktivitetsniva}
+- Mål: ${data.mal.join(', ')}
+- Allergier/Preferanser: ${data.allergier.length > 0 ? data.allergier.join(', ') : 'Ingen'}
+
+2. KOSTHOLDSPLAN BEREGNINGER
+- Beregn TDEE (Totalt Daglig Energiforbruk) basert på brukerdata
+- Beregn makronæringsfordeling basert på mål
+- Spesifiser protein, karbohydrater og fett i gram og prosent
+- Inkluder anbefalte supplementer hvis relevant
+
+3. DAGLIG KOSTHOLDSPLAN
+Lag en detaljert plan med nøyaktig ${data.maaltider} hovedmåltider og ${data.snacks} mellommåltider.
+For hvert måltid, spesifiser:
+- Måltidsnavn
+- Ingredienser med mengder
+- Næringsinnhold (kalorier, protein, karbohydrater, fett)
+- Tilberedningstips tilpasset ${data.koking} kokekunnskap
+
+4. UKENTLIG MIDDAGSPLAN
+Lag en variert ukesplan for middager som passer med brukerens ${data.budsjett} budsjett.
+For hver middag, spesifiser:
+- Rett
+- Ingredienser med mengder
+- Næringsinnhold
+- Tilberedning
+
+5. HANDLELISTE
+Organiser ingrediensene i kategorier:
+- Kjøtt/Fisk/Egg
+- Meieriprodukter
+- Frukt og grønnsaker
+- Kornprodukter
+- Krydder og oljer
+- Annet
+
+6. OPPSUMMERING
+- Totale daglige kalorier
+- Makronæringsfordeling
+- Estimert kostnad per uke
+- Tips for måltidsprep
+- Oppbevaringstips
+
+Svar i HTML-format med <h1>-<h3> for overskrifter, <ul> og <li> for lister, og <p> for tekst.
+Ikke inkluder <html>, <head> eller <body> tagger.
+Bruk norsk språk og metriske måleenheter.`;
   };
 
   const handleSubmit = async (e) => {
@@ -176,178 +224,245 @@ Svar i HTML med kun <h1>-<h3>, <ul>, <li>, <p>. Ikke bruk <html>, <head> eller <
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white p-8">
+    <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-gray-800">
       <Head>
-        <title>CoreMind - Kosthold</title>
-        <meta name="description" content="Profesjonelt kosthold med CoreMind" />
+        <title>CoreMind Kosthold - Personlig Kostholdsplan</title>
       </Head>
 
-      <div className="max-w-4xl mx-auto">
-        <header className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-green-400 to-teal-500 bg-clip-text text-transparent">Få ditt personlige kosthold</h1>
-          <p className="text-gray-400">Fyll ut skjemaet under for å få et skreddersydd kosthold</p>
-        </header>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Chat Section */}
-          <div className="bg-emerald-800/50 p-4 sm:p-6 rounded-xl shadow-lg border border-emerald-600">
-            <h2 className="text-xl sm:text-2xl font-semibold mb-4 flex items-center">
-              <span className="mr-2">🥗</span> Chat med Ernæringscoach
-            </h2>
-            
-            <div className="bg-emerald-900/50 p-3 sm:p-4 rounded-lg max-h-[400px] sm:max-h-[500px] overflow-y-auto mb-4 scroll-smooth">
-              {chatHistory.length === 0 ? (
-                <div className="text-emerald-200 text-center">
-                  <p className="mb-2 text-base sm:text-lg font-medium">Start en samtale med din ernæringscoach for å få personlig veiledning.</p>
-                  <p className="text-emerald-300 text-sm sm:text-base">Du kan få hjelp med kosthold, måltidsplanlegging, og andre ernæringsrelaterte spørsmål.</p>
-                </div>
-              ) : (
-                chatHistory.map((entry, idx) => (
-                  <div key={idx} className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
-                    {entry.question && (
-                      <div className="flex items-start">
-                        <div className="bg-emerald-800/60 p-2 sm:p-3 rounded-lg max-w-[85%] sm:max-w-[80%]">
-                          <p className="font-semibold text-emerald-300 mb-1 text-sm sm:text-base">Du</p>
-                          <p className="text-emerald-100 text-sm sm:text-base">{entry.question}</p>
-                        </div>
-                      </div>
-                    )}
-                    {(entry.answer || entry.isLoading) && (
-                      <div className="flex items-start justify-end">
-                        <div className="bg-emerald-700/60 p-2 sm:p-3 rounded-lg max-w-[85%] sm:max-w-[80%]">
-                          <p className="font-semibold text-emerald-300 mb-1 text-sm sm:text-base">Ernæringscoach</p>
-                          {entry.isLoading ? (
-                            <p className="animate-pulse text-emerald-200 text-sm sm:text-base">Skriver...</p>
-                          ) : (
-                            <div className="prose prose-sm sm:prose prose-invert prose-p:text-emerald-100 prose-headings:text-emerald-200 prose-strong:text-emerald-200 prose-li:text-emerald-100 max-w-none" dangerouslySetInnerHTML={{ __html: entry.answer }} />
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))
-              )}
-              <div ref={chatEndRef} />
-            </div>
-
-            <div className="flex gap-2">
-              <textarea
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Still spørsmål om kosthold, ernæring eller matplaner..."
-                className="flex-grow p-2 sm:p-3 rounded-lg bg-emerald-900/50 border border-emerald-600 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400 focus:outline-none resize-none text-emerald-100 placeholder-emerald-500 text-sm sm:text-base"
-                rows="2"
-              />
-              <button
-                onClick={() => handleChatSubmit(chatInput)}
-                disabled={isLoading || !chatInput.trim()}
-                className={`px-4 sm:px-6 py-2 rounded-lg font-semibold transition-colors text-sm sm:text-base ${
-                  isLoading || !chatInput.trim()
-                    ? 'bg-emerald-700/50 text-emerald-400/50 cursor-not-allowed'
-                    : 'bg-emerald-600 hover:bg-emerald-500 text-white'
-                }`}
-              >
-                Send
-              </button>
-            </div>
-          </div>
-
-          {/* Form Section */}
-          <div className="bg-gradient-to-br from-zinc-900 to-zinc-800 p-6 rounded-lg shadow-lg border border-zinc-700">
-            <h2 className="text-xl font-semibold mb-4 text-green-400">Kosthold Generator</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+      <main className="container mx-auto px-4 py-8">
+        <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-6 bg-gray-800 p-6 rounded-lg shadow-xl">
+          <h1 className="text-3xl font-bold text-center text-white mb-8">Personlig Kostholdsplan</h1>
+          
+          {/* Grunnleggende informasjon */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold text-blue-400">Personlig Informasjon</h2>
+            <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block mb-1">Alder</label>
+                <label className="block text-gray-300">Alder</label>
                 <input
                   type="number"
                   name="alder"
                   value={formData.alder}
                   onChange={handleChange}
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white focus:outline-none focus:border-green-500"
+                  className="w-full bg-gray-700 text-white rounded p-2"
                   required
                 />
               </div>
-
               <div>
-                <label className="block mb-1">Kjønn</label>
+                <label className="block text-gray-300">Kjønn</label>
                 <select
                   name="kjonn"
                   value={formData.kjonn}
                   onChange={handleChange}
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white focus:outline-none focus:border-green-500"
+                  className="w-full bg-gray-700 text-white rounded p-2"
                   required
                 >
                   <option value="">Velg kjønn</option>
                   <option value="mann">Mann</option>
                   <option value="kvinne">Kvinne</option>
+                  <option value="annet">Annet</option>
                 </select>
               </div>
-
               <div>
-                <label className="block mb-1">Høyde (cm)</label>
+                <label className="block text-gray-300">Høyde (cm)</label>
                 <input
                   type="number"
                   name="hoyde"
                   value={formData.hoyde}
                   onChange={handleChange}
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white focus:outline-none focus:border-green-500"
+                  className="w-full bg-gray-700 text-white rounded p-2"
                   required
                 />
               </div>
-
               <div>
-                <label className="block mb-1">Vekt (kg)</label>
+                <label className="block text-gray-300">Vekt (kg)</label>
                 <input
                   type="number"
                   name="vekt"
                   value={formData.vekt}
                   onChange={handleChange}
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white focus:outline-none focus:border-green-500"
+                  className="w-full bg-gray-700 text-white rounded p-2"
                   required
                 />
               </div>
+            </div>
+          </div>
 
+          {/* Aktivitetsnivå og mål */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold text-blue-400">Aktivitet og Mål</h2>
+            <div>
+              <label className="block text-gray-300">Aktivitetsnivå</label>
+              <select
+                name="aktivitetsniva"
+                value={formData.aktivitetsniva}
+                onChange={handleChange}
+                className="w-full bg-gray-700 text-white rounded p-2"
+                required
+              >
+                <option value="">Velg aktivitetsnivå</option>
+                <option value="stillesittende">Stillesittende (lite eller ingen trening)</option>
+                <option value="lett_aktiv">Lett aktiv (1-3 økter i uken)</option>
+                <option value="moderat_aktiv">Moderat aktiv (3-5 økter i uken)</option>
+                <option value="veldig_aktiv">Veldig aktiv (6-7 økter i uken)</option>
+                <option value="ekstremt_aktiv">Ekstremt aktiv (2+ økter per dag)</option>
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-gray-300 mb-2">Mål (velg alle som passer)</label>
+              <div className="space-y-2">
+                {['Vektnedgang', 'Vedlikeholde vekt', 'Muskelvekst', 'Bedre helse', 'Mer energi', 'Bedre prestasjon'].map((goal) => (
+                  <label key={goal} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      name="mal"
+                      value={goal}
+                      checked={formData.mal.includes(goal)}
+                      onChange={handleChange}
+                      className="form-checkbox text-blue-500"
+                    />
+                    <span className="text-gray-300">{goal}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Måltidsplanlegging */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold text-blue-400">Måltidsplanlegging</h2>
+            <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block mb-1">Aktivitetsnivå</label>
+                <label className="block text-gray-300">Antall hovedmåltider per dag</label>
                 <select
-                  name="aktivitetsniva"
-                  value={formData.aktivitetsniva}
+                  name="maaltider"
+                  value={formData.maaltider}
                   onChange={handleChange}
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white focus:outline-none focus:border-green-500"
-                  required
+                  className="w-full bg-gray-700 text-white rounded p-2"
                 >
-                  <option value="">Velg aktivitetsnivå</option>
-                  <option value="sedentær">Sedentær</option>
-                  <option value="lett aktiv">Lett aktiv</option>
-                  <option value="moderat aktiv">Moderat aktiv</option>
-                  <option value="veldig aktiv">Veldig aktiv</option>
+                  {[2, 3, 4, 5, 6].map((num) => (
+                    <option key={num} value={num}>{num}</option>
+                  ))}
                 </select>
               </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className={`w-full py-2 rounded ${
-                  loading
-                    ? 'bg-green-500/50 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700'
-                }`}
-              >
-                {loading ? 'Genererer...' : 'Generer kosthold'}
-              </button>
-            </form>
+              <div>
+                <label className="block text-gray-300">Antall mellommåltider</label>
+                <select
+                  name="snacks"
+                  value={formData.snacks}
+                  onChange={handleChange}
+                  className="w-full bg-gray-700 text-white rounded p-2"
+                >
+                  {[0, 1, 2, 3, 4].map((num) => (
+                    <option key={num} value={num}>{num}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
           </div>
-        </div>
 
-        {/* Results Section */}
+          {/* Matpreferanser og restriksjoner */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold text-blue-400">Matpreferanser og Restriksjoner</h2>
+            <div>
+              <label className="block text-gray-300 mb-2">Allergier/Intoleranser</label>
+              <div className="space-y-2">
+                {[
+                  'Gluten', 'Laktose', 'Nøtter', 'Egg', 'Skalldyr', 'Soya', 
+                  'Fisk', 'Melk', 'Hvete', 'Annet'
+                ].map((allergi) => (
+                  <label key={allergi} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      name="allergier"
+                      value={allergi}
+                      checked={formData.allergier.includes(allergi)}
+                      onChange={handleChange}
+                      className="form-checkbox text-blue-500"
+                    />
+                    <span className="text-gray-300">{allergi}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Praktiske hensyn */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold text-blue-400">Praktiske Hensyn</h2>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-gray-300">Kokekunnskaper</label>
+                <select
+                  name="koking"
+                  value={formData.koking}
+                  onChange={handleChange}
+                  className="w-full bg-gray-700 text-white rounded p-2"
+                >
+                  <option value="nybegynner">Nybegynner</option>
+                  <option value="enkel">Enkel matlaging</option>
+                  <option value="middels">Middels erfaren</option>
+                  <option value="erfaren">Erfaren</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-gray-300">Matbudsjett</label>
+                <select
+                  name="budsjett"
+                  value={formData.budsjett}
+                  onChange={handleChange}
+                  className="w-full bg-gray-700 text-white rounded p-2"
+                >
+                  <option value="lav">Økonomisk</option>
+                  <option value="moderat">Moderat</option>
+                  <option value="hoy">Høyt</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200"
+          >
+            Generer Kostholdsplan
+          </button>
+        </form>
+
+        {showDetailsPopup && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 overflow-y-auto">
+            <div className="bg-gray-800 p-6 rounded-lg w-full max-w-md my-8">
+              <h2 className="text-xl font-bold text-white mb-4">Bekreft valg</h2>
+              <p className="text-gray-300 mb-4">
+                Du har valgt {formData.maaltider} hovedmåltider og {formData.snacks} mellommåltider per dag.
+                Kostholdsplanen vil bli tilpasset dine mål og preferanser.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button
+                  onClick={handleGenerateProgram}
+                  className="w-full sm:flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                >
+                  Generer Plan
+                </button>
+                <button
+                  onClick={() => setShowDetailsPopup(false)}
+                  className="w-full sm:flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+                >
+                  Avbryt
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {program && (
-          <div className="mt-6 bg-gradient-to-br from-zinc-900 to-zinc-800 p-6 rounded-lg shadow-lg border border-zinc-700">
-            <div className="flex justify-between items-center mb-4">
+          <div className="mt-6 bg-gradient-to-br from-zinc-900 to-zinc-800 p-6 rounded-lg shadow-lg border border-zinc-700 overflow-y-auto">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4">
               <h2 className="text-xl font-semibold text-green-400">Ditt Kosthold</h2>
               <button
                 onClick={handleGeneratePDFWithJS}
-                className="px-4 py-2 bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 rounded"
+                className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 rounded"
               >
                 Last ned PDF
               </button>
@@ -355,242 +470,7 @@ Svar i HTML med kun <h1>-<h3>, <ul>, <li>, <p>. Ikke bruk <html>, <head> eller <
             <div className="prose prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: program }} />
           </div>
         )}
-      </div>
-
-      {/* Details Popup */}
-      {showDetailsPopup && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-zinc-900 to-zinc-800 rounded-lg p-6 max-w-md w-full shadow-xl border border-zinc-700">
-            <h2 className="text-xl font-bold mb-4 text-green-400">Viktige detaljer før kosthold generering</h2>
-            <p className="mb-4 text-gray-400">For å lage et optimalt kosthold, trenger vi noen viktige detaljer:</p>
-            
-            <div className="space-y-4 mb-6">
-              <div>
-                <label className="block text-sm font-medium mb-1">Hva er ditt mål med kostholdet?</label>
-                <div className="space-y-2">
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      name="mal"
-                      value="vektnedgang"
-                      checked={formData.mal.includes('vektnedgang')}
-                      onChange={handleChange}
-                      className="mr-2"
-                    />
-                    <span>Vektnedgang</span>
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      name="mal"
-                      value="vektokning"
-                      checked={formData.mal.includes('vektokning')}
-                      onChange={handleChange}
-                      className="mr-2"
-                    />
-                    <span>Vektøkning</span>
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      name="mal"
-                      value="vedlikehold"
-                      checked={formData.mal.includes('vedlikehold')}
-                      onChange={handleChange}
-                      className="mr-2"
-                    />
-                    <span>Vedlikehold av vekt</span>
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      name="mal"
-                      value="helse"
-                      checked={formData.mal.includes('helse')}
-                      onChange={handleChange}
-                      className="mr-2"
-                    />
-                    <span>Bedre helse</span>
-                  </label>
-                </div>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium mb-1">Har du noen allergier eller intoleranser?</label>
-                <div className="space-y-2">
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      name="allergier"
-                      value="laktose"
-                      checked={formData.allergier.includes('laktose')}
-                      onChange={handleChange}
-                      className="mr-2"
-                    />
-                    <span>Laktose</span>
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      name="allergier"
-                      value="gluten"
-                      checked={formData.allergier.includes('gluten')}
-                      onChange={handleChange}
-                      className="mr-2"
-                    />
-                    <span>Gluten</span>
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      name="allergier"
-                      value="nøtter"
-                      checked={formData.allergier.includes('nøtter')}
-                      onChange={handleChange}
-                      className="mr-2"
-                    />
-                    <span>Nøtter</span>
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      name="allergier"
-                      value="egg"
-                      checked={formData.allergier.includes('egg')}
-                      onChange={handleChange}
-                      className="mr-2"
-                    />
-                    <span>Egg</span>
-                  </label>
-                </div>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium mb-1">Har du noen kostholdspreferanser?</label>
-                <div className="space-y-2">
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      name="preferanser"
-                      value="vegetar"
-                      checked={formData.preferanser.includes('vegetar')}
-                      onChange={handleChange}
-                      className="mr-2"
-                    />
-                    <span>Vegetar</span>
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      name="preferanser"
-                      value="vegan"
-                      checked={formData.preferanser.includes('vegan')}
-                      onChange={handleChange}
-                      className="mr-2"
-                    />
-                    <span>Vegan</span>
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      name="preferanser"
-                      value="lavkarbo"
-                      checked={formData.preferanser.includes('lavkarbo')}
-                      onChange={handleChange}
-                      className="mr-2"
-                    />
-                    <span>Lavkarbo</span>
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      name="preferanser"
-                      value="palio"
-                      checked={formData.preferanser.includes('palio')}
-                      onChange={handleChange}
-                      className="mr-2"
-                    />
-                    <span>Palio</span>
-                  </label>
-                </div>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium mb-1">Antall måltider per dag</label>
-                <select
-                  name="maaltider"
-                  value={formData.maaltider}
-                  onChange={handleChange}
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white focus:outline-none focus:border-green-500"
-                >
-                  <option value="2">2 måltider</option>
-                  <option value="3">3 måltider</option>
-                  <option value="4">4 måltider</option>
-                  <option value="5">5 måltider</option>
-                </select>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium mb-1">Antall snacks per dag</label>
-                <select
-                  name="snacks"
-                  value={formData.snacks}
-                  onChange={handleChange}
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white focus:outline-none focus:border-green-500"
-                >
-                  <option value="0">Ingen snacks</option>
-                  <option value="1">1 snack</option>
-                  <option value="2">2 snacks</option>
-                  <option value="3">3 snacks</option>
-                </select>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium mb-1">Kokekunnskap</label>
-                <select
-                  name="koking"
-                  value={formData.koking}
-                  onChange={handleChange}
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white focus:outline-none focus:border-green-500"
-                >
-                  <option value="enkel">Enkel</option>
-                  <option value="moderat">Moderat</option>
-                  <option value="avansert">Avansert</option>
-                </select>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium mb-1">Budsjett</label>
-                <select
-                  name="budsjett"
-                  value={formData.budsjett}
-                  onChange={handleChange}
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white focus:outline-none focus:border-green-500"
-                >
-                  <option value="lavt">Lavt</option>
-                  <option value="moderat">Moderat</option>
-                  <option value="høyt">Høyt</option>
-                </select>
-              </div>
-            </div>
-            
-            <div className="flex justify-end gap-4">
-              <button 
-                onClick={() => setShowDetailsPopup(false)} 
-                className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded"
-              >
-                Avbryt
-              </button>
-              <button 
-                onClick={handleGenerateProgram} 
-                className="px-4 py-2 bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 rounded"
-              >
-                Generer kosthold
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      </main>
     </div>
   );
 } 
