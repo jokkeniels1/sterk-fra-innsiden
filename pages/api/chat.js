@@ -28,19 +28,29 @@ export default async function handler(req, res) {
   try {
     const apiKey = process.env.OPENROUTER_API_KEY;
     
+    // Debug: Sjekk om API-nøkkelen er tilgjengelig
+    console.log('API Key exists:', !!apiKey);
+    console.log('API Key length:', apiKey ? apiKey.length : 0);
+    console.log('API Key start:', apiKey ? apiKey.substring(0, 10) + '...' : 'none');
+    
     if (!apiKey) {
       throw new Error("API-nøkkel mangler i miljøvariablene");
     }
 
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+      'HTTP-Referer': 'https://coremind.no',
+      'X-Title': 'CoreMind App'
+    };
+
+    // Debug: Skriv ut headers
+    console.log('Request headers:', headers);
+
     const response = await axios({
       method: 'post',
       url: 'https://openrouter.ai/api/v1/chat/completions',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-        'HTTP-Referer': 'https://coremind.no',
-        'X-Title': 'CoreMind App'
-      },
+      headers: headers,
       data: {
         model: "openai/gpt-3.5-turbo",
         messages: [
@@ -67,10 +77,17 @@ export default async function handler(req, res) {
     return res.status(200).json({ result: response.data.choices[0].message.content });
 
   } catch (error) {
-    console.error("API Error:", {
+    // Forbedret feillogging
+    console.error("API Error Details:", {
       message: error.message,
       response: error.response?.data,
-      status: error.response?.status
+      status: error.response?.status,
+      headers: error.response?.headers,
+      config: {
+        url: error.config?.url,
+        headers: error.config?.headers,
+        method: error.config?.method
+      }
     });
     
     return res.status(500).json({
