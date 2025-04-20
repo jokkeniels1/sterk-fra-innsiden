@@ -13,8 +13,8 @@ export default function Om() {
           <h1 className="text-4xl font-bold text-center mb-8">Om CoreMind</h1>
           
           <section className="space-y-4">
-            <h2 className="text-2xl font-semibold text-primary-400">Vår Visjon</h2>
-            <p className="text-lg leading-relaxed">
+            <h2 className="text-2xl font-semibold text-blue-400">Vår Visjon</h2>
+            <p className="text-lg leading-relaxed text-gray-200">
               CoreMind er en revolusjonerende plattform som kombinerer kunstig intelligens med ekspertise innen trening, 
               kosthold og mental styrke. Vårt mål er å gjøre profesjonell treningsveiledning tilgjengelig for alle, 
               tilpasset dine unike behov og mål.
@@ -22,23 +22,23 @@ export default function Om() {
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-2xl font-semibold text-primary-400">Hva Vi Tilbyr</h2>
+            <h2 className="text-2xl font-semibold text-blue-400">Hva Vi Tilbyr</h2>
             <div className="grid md:grid-cols-2 gap-6">
-              <div className="card bg-white/5 p-6 rounded-xl">
-                <h3 className="text-xl font-semibold mb-3 text-secondary-400">Fysisk Trening</h3>
-                <p>Personlige treningsprogrammer tilpasset ditt nivå, mål og tilgjengelig utstyr.</p>
+              <div className="bg-gray-800/80 p-6 rounded-xl border border-gray-700 hover:border-blue-500 transition-colors">
+                <h3 className="text-xl font-semibold mb-3 text-blue-400">Fysisk Trening</h3>
+                <p className="text-gray-300">Personlige treningsprogrammer tilpasset ditt nivå, mål og tilgjengelig utstyr.</p>
               </div>
-              <div className="card bg-white/5 p-6 rounded-xl">
-                <h3 className="text-xl font-semibold mb-3 text-secondary-400">Mental Styrke</h3>
-                <p>Øvelser og teknikker for å bygge mental robusthet og fokus.</p>
+              <div className="bg-gray-800/80 p-6 rounded-xl border border-gray-700 hover:border-blue-500 transition-colors">
+                <h3 className="text-xl font-semibold mb-3 text-blue-400">Mental Styrke</h3>
+                <p className="text-gray-300">Øvelser og teknikker for å bygge mental robusthet og fokus.</p>
               </div>
-              <div className="card bg-white/5 p-6 rounded-xl">
-                <h3 className="text-xl font-semibold mb-3 text-secondary-400">Kosthold</h3>
-                <p>Skreddersydde kostholdsplaner med handleliste og næringsberegninger.</p>
+              <div className="bg-gray-800/80 p-6 rounded-xl border border-gray-700 hover:border-blue-500 transition-colors">
+                <h3 className="text-xl font-semibold mb-3 text-blue-400">Kosthold</h3>
+                <p className="text-gray-300">Skreddersydde kostholdsplaner med handleliste og næringsberegninger.</p>
               </div>
-              <div className="card bg-white/5 p-6 rounded-xl">
-                <h3 className="text-xl font-semibold mb-3 text-secondary-400">Drømmetolkning</h3>
-                <p>Profesjonell analyse av drømmer for personlig innsikt og vekst.</p>
+              <div className="bg-gray-800/80 p-6 rounded-xl border border-gray-700 hover:border-blue-500 transition-colors">
+                <h3 className="text-xl font-semibold mb-3 text-blue-400">Drømmetolkning</h3>
+                <p className="text-gray-300">Profesjonell analyse av drømmer for personlig innsikt og vekst.</p>
               </div>
             </div>
           </section>
@@ -97,6 +97,6 @@ export default function Om() {
           </section>
         </div>
       </main>
-      </div>
+    </div>
   );
 }
